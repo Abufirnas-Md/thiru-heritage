@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>தமிழ்நாடு | Cultural Heritage Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+Tamil:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9933a;
+    --gold-light: #f0c060;
+    --gold-pale: #f5e8c0;
+    --crimson: #8b1a1a;
+    --deep: #0a0604;
+    --dark: #130c05;
+    --mid: #1e1208;
+    --surface: #251809;
+    --surface2: #2e1e0c;
+    --text: #f0e0c0;
+    --text-muted: #b09060;
+    --accent: #d4a520;
+    --teal: #2a7a6a;
+    --teal-light: #3aaa90;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── GRAIN OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .35;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,147,58,.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(139,26,26,.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 20%, rgba(42,122,106,.08) 0%, transparent 60%),
+      linear-gradient(180deg, #0a0604 0%, #130c05 50%, #0a0604 100%);
+  }
+
+  .kolam-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(201,147,58,.15);
+    animation: ringPulse 8s ease-in-out infinite;
+  }
+  .kolam-ring:nth-child(1) { width: 600px; height: 600px; animation-delay: 0s; }
+  .kolam-ring:nth-child(2) { width: 800px; height: 800px; animation-delay: 1.5s; border-style: dashed; }
+  .kolam-ring:nth-child(3) { width: 1000px; height: 1000px; animation-delay: 3s; }
+
+  @keyframes ringPulse {
+    0%,100% { opacity: .15; transform: scale(1); }
+    50% { opacity: .35; transform: scale(1.02); }
+  }
+
+  .hero-lamp {
+    font-size: 3.5rem;
+    animation: lampGlow 3s ease-in-out infinite;
+    margin-bottom: 1rem;
+    position: relative; z-index: 2;
+  }
+  @keyframes lampGlow {
+    0%,100% { filter: drop-shadow(0 0 8px rgba(201,147,58,.6)); }
+    50% { filter: drop-shadow(0 0 24px rgba(201,147,58,1)) drop-shadow(0 0 40px rgba(240,192,96,.4)); }
+  }
+
+  .hero-tamil {
+    font-family: 'Noto Sans Tamil', serif;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--gold-light);
+    letter-spacing: .2em;
+    margin-bottom: .8rem;
+    position: relative; z-index: 2;
+    animation: fadeUp .8s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1.1;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease .2s both;
+    text-shadow: 0 0 40px rgba(201,147,58,.4);
+  }
+
+  .hero-sub {
+    font-size: clamp(.9rem, 2vw, 1.3rem);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: .8rem;
+    letter-spacing: .05em;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease .4s both;
+  }
+
+  .divider-ornament {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 2rem 0;
+    position: relative; z-index: 2;
+    animation: fadeUp 1s ease .6s both;
+  }
+  .divider-ornament::before,
+  .divider-ornament::after {
+    content: '';
+    flex: 1; max-width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .divider-ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+  .divider-ornament span { color: var(--gold); font-size: 1.4rem; }
+
+  .scroll-cta {
+    position: relative; z-index: 2;
+    margin-top: 2.5rem;
+    animation: fadeUp 1s ease .8s both;
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: var(--text-muted); font-size: .9rem; letter-spacing: .1em;
+    cursor: pointer;
+  }
+  .scroll-cta .arrow {
+    width: 24px; height: 24px;
+    border-right: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
+    transform: rotate(45deg);
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(6px); } }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── STATS STRIP ─── */
+  .stats-strip {
+    background: var(--surface);
+    border-top: 1px solid rgba(201,147,58,.2);
+    border-bottom: 1px solid rgba(201,147,58,.2);
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    border-right: 1px solid rgba(201,147,58,.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item.visible { opacity: 1; transform: translateY(0); }
+
+  .stat-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--gold);
+    display: block;
+    text-shadow: 0 0 20px rgba(201,147,58,.3);
+  }
+  .stat-label { font-size: .85rem; color: var(--text-muted); letter-spacing: .08em; margin-top: .3rem; }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 5rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .section-header.visible { opacity: 1; transform: translateY(0); }
+
+  .section-tag {
+    font-size: .75rem;
+    letter-spacing: .3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: .8rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .section-title span { color: var(--gold); }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--teal) 50%, var(--crimson) 100%);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 3rem 3rem;
+    opacity: 0; transform: translateX(-20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+
+  .timeline-dot {
+    position: absolute; left: -7px; top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--dark);
+    box-shadow: 0 0 12px rgba(201,147,58,.6);
+  }
+
+  .timeline-era {
+    font-size: .7rem; letter-spacing: .2em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: .4rem;
+  }
+  .timeline-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.2rem; color: var(--text);
+    margin-bottom: .6rem;
+  }
+  .timeline-desc {
+    font-size: 1rem; color: var(--text-muted); line-height: 1.7;
+  }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+  .tag {
+    font-size: .7rem; letter-spacing: .08em;
+    padding: .2rem .7rem;
+    border-radius: 20px;
+    border: 1px solid rgba(201,147,58,.3);
+    color: var(--gold-light);
+    background: rgba(201,147,58,.05);
+  }
+
+  /* ─── CARDS GRID ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid rgba(201,147,58,.12);
+    border-radius: 4px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease, border-color .3s, box-shadow .3s;
+  }
+  .card.visible { opacity: 1; transform: translateY(0); }
+  .card:hover {
+    border-color: rgba(201,147,58,.4);
+    box-shadow: 0 8px 40px rgba(201,147,58,.08), inset 0 1px 0 rgba(201,147,58,.1);
+    transform: translateY(-4px) !important;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem; color: var(--gold);
+    margin-bottom: .8rem; line-height: 1.3;
+  }
+  .card-body { font-size: .95rem; color: var(--text-muted); line-height: 1.75; }
+  .card-location {
+    margin-top: 1rem; font-size: .75rem;
+    color: var(--teal-light); letter-spacing: .1em;
+  }
+
+  /* ─── TRADE MAP ─── */
+  .trade-section {
+    background: var(--surface);
+    border: 1px solid rgba(201,147,58,.12);
+    border-radius: 4px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .trade-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(42,122,106,.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .trade-routes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .trade-route {
+    padding: 1.2rem;
+    border: 1px solid rgba(42,122,106,.25);
+    border-radius: 3px;
+    background: rgba(42,122,106,.04);
+    opacity: 0; transform: scale(.95);
+    transition: opacity .5s ease, transform .5s ease, background .3s;
+  }
+  .trade-route.visible { opacity: 1; transform: scale(1); }
+  .trade-route:hover { background: rgba(42,122,106,.1); }
+
+  .route-flag { font-size: 1.5rem; margin-bottom: .5rem; }
+  .route-name { font-family: 'Cinzel Decorative', serif; font-size: .85rem; color: var(--teal-light); margin-bottom: .3rem; }
+  .route-goods { font-size: .8rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* ─── DISCOVERY BAR CHART ─── */
+  .bar-chart { margin-top: 2rem; }
+  .bar-item {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .bar-item.visible { opacity: 1; }
+  .bar-label { min-width: 140px; font-size: .85rem; color: var(--text-muted); text-align: right; }
+  .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,.03); border-radius: 2px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--crimson), var(--gold));
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(.22,1,.36,1);
+    position: relative;
+  }
+  .bar-fill::after {
+    content: attr(data-count);
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: .75rem; color: var(--gold-pale); font-family: 'Cinzel Decorative', serif;
+  }
+
+  /* ─── RELIGION WHEEL ─── */
+  .religion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .relic-card {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border: 1px solid rgba(201,147,58,.1);
+    border-radius: 3px;
+    background: rgba(201,147,58,.02);
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .5s ease, transform .5s ease, background .3s;
+  }
+  .relic-card.visible { opacity: 1; transform: translateY(0); }
+  .relic-card:hover { background: rgba(201,147,58,.06); }
+  .relic-icon { font-size: 2.2rem; display: block; margin-bottom: .6rem; }
+  .relic-name { font-family: 'Cinzel Decorative', serif; font-size: .8rem; color: var(--gold); margin-bottom: .4rem; }
+  .relic-desc { font-size: .8rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* ─── QUOTE BLOCK ─── */
+  .quote-block {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--surface);
+    border-top: 1px solid rgba(201,147,58,.15);
+    border-bottom: 1px solid rgba(201,147,58,.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-block::before {
+    content: '❝';
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 8rem; color: rgba(201,147,58,.05);
+    font-family: serif; line-height: 1;
+  }
+
+  .quote-text {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    color: var(--gold-light);
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+    position: relative; z-index: 1;
+  }
+  .quote-source { color: var(--text-muted); font-style: italic; font-size: .9rem; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--deep);
+    border-top: 1px solid rgba(201,147,58,.2);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: .85rem;
+    color: var(--text-muted);
+  }
+  footer .footer-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: .5rem;
+  }
+  footer .footer-tamil { font-family: 'Noto Sans Tamil', serif; font-size: 1rem; color: var(--gold-light); margin-bottom: 1rem; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(180deg, rgba(10,6,4,.95) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(201,147,58,.1);
+    transition: background .3s;
+  }
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: .95rem;
+    color: var(--gold);
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: .8rem; letter-spacing: .1em;
+    color: var(--text-muted); text-decoration: none;
+    transition: color .2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ─── HORIZONTAL RULE ─── */
+  .hr-ornament {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin: 3rem 0;
+    color: var(--gold); font-size: 1rem;
+  }
+  .hr-ornament::before, .hr-ornament::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,147,58,.3), transparent);
+  }
+
+  /* ─── STAGGER DELAYS ─── */
+  .card:nth-child(1) { transition-delay: 0s; }
+  .card:nth-child(2) { transition-delay: .08s; }
+  .card:nth-child(3) { transition-delay: .16s; }
+  .card:nth-child(4) { transition-delay: .24s; }
+  .card:nth-child(5) { transition-delay: .32s; }
+  .card:nth-child(6) { transition-delay: .40s; }
+  .card:nth-child(7) { transition-delay: .48s; }
+  .card:nth-child(8) { transition-delay: .56s; }
+  .card:nth-child(9) { transition-delay: .64s; }
+
+  .timeline-item:nth-child(1) { transition-delay: 0s; }
+  .timeline-item:nth-child(2) { transition-delay: .12s; }
+  .timeline-item:nth-child(3) { transition-delay: .24s; }
+  .timeline-item:nth-child(4) { transition-delay: .36s; }
+  .timeline-item:nth-child(5) { transition-delay: .48s; }
+
+  .trade-route:nth-child(1) { transition-delay: 0s; }
+  .trade-route:nth-child(2) { transition-delay: .08s; }
+  .trade-route:nth-child(3) { transition-delay: .16s; }
+  .trade-route:nth-child(4) { transition-delay: .24s; }
+  .trade-route:nth-child(5) { transition-delay: .32s; }
+  .trade-route:nth-child(6) { transition-delay: .40s; }
+
+  .relic-card:nth-child(1) { transition-delay: 0s; }
+  .relic-card:nth-child(2) { transition-delay: .1s; }
+  .relic-card:nth-child(3) { transition-delay: .2s; }
+  .relic-card:nth-child(4) { transition-delay: .3s; }
+  .relic-card:nth-child(5) { transition-delay: .4s; }
+  .relic-card:nth-child(6) { transition-delay: .5s; }
+
+  .bar-item:nth-child(1) { transition-delay: 0s; }
+  .bar-item:nth-child(2) { transition-delay: .1s; }
+  .bar-item:nth-child(3) { transition-delay: .2s; }
+  .bar-item:nth-child(4) { transition-delay: .3s; }
+  .bar-item:nth-child(5) { transition-delay: .4s; }
+  .bar-item:nth-child(6) { transition-delay: .5s; }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .bar-label { min-width: 90px; font-size: .7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🪔 தமிழ்நாடு Heritage</div>
+  <div class="nav-links">
+    <a href="#prehistoric">Prehistoric</a>
+    <a href="#historic">Historic Sites</a>
+    <a href="#trade">Trade</a>
+    <a href="#culture">Culture</a>
+    <a href="#religion">Religion</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="kolam-ring"></div>
+  <div class="kolam-ring"></div>
+  <div class="kolam-ring"></div>
+
+  <div class="hero-lamp">🪔</div>
+  <div class="hero-tamil">தமிழ் கலாச்சாரம் வாழட்டும்</div>
+  <h1 class="hero-title">Cultural Heritage<br>of Tamil Nadu</h1>
+  <p class="hero-sub">As Gleaned From Excavations — Natana Kasinathan, 1995</p>
+
+  <div class="divider-ornament"><span>✦</span></div>
+
+  <div class="scroll-cta" onclick="document.getElementById('stats').scrollIntoView({behavior:'smooth'})">
+    EXPLORE THE HERITAGE
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip" id="stats">
+  <div class="stat-item">
+    <span class="stat-number" data-target="100">0</span>
+    <div class="stat-label">Excavation Sites</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="4000">0</span>
+    <div class="stat-label">Artefacts from Adichanallur</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="800">0</span>
+    <div class="stat-label">BC — Korkai C14 Date</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="11">0</span>
+    <div class="stat-label">Coin Moulds at Kanchipuram</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="316">0</span>
+    <div class="stat-label">BC — Pumpuhar Wharf Date</div>
+  </div>
+</div>
+
+<!-- PREHISTORIC TIMELINE -->
+<section class="section" id="prehistoric">
+  <div class="section-header">
+    <span class="section-tag">Palaeolithic to Megalithic</span>
+    <h2 class="section-title">The <span>Pre-Historic</span> Period</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--gold)"></div>
+      <div class="timeline-era">Palaeolithic · Attirambakkam</div>
+      <div class="timeline-name">Madras Hand Axe Industry</div>
+      <div class="timeline-desc">Fossil of a human leg found in association with Palaeolithic implements. Achulian-type hand axes closely similar to African hand axes were discovered. This Palaeolithic tool industry, known as the "Madras Hand Axe Industry," was in existence at Attirambakkam.</div>
+      <div class="timeline-tags"><span class="tag">Hand Axes</span><span class="tag">Human Fossils</span><span class="tag">African Parallels</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--teal)"></div>
+      <div class="timeline-era">Neolithic · Paiyampalli</div>
+      <div class="timeline-name">Pit Dwellings & Microlithic Tools</div>
+      <div class="timeline-desc">Sixteen natural caverns inhabited by Palaeolithic folk were located in Gudiyam Hills. Microlithic tools were unearthed from Tiruttangal excavation. Pit dwellings of Neolithic people were discovered at Paiyampalli, with Chalcolithic and Iron Age implements from T. Kallupatti, Madurai district.</div>
+      <div class="timeline-tags"><span class="tag">Microliths</span><span class="tag">Pit Dwellings</span><span class="tag">Cavern Sites</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--crimson)"></div>
+      <div class="timeline-era">Megalithic · Various Sites</div>
+      <div class="timeline-name">Burials, Cairn Circles & Iron Age</div>
+      <div class="timeline-desc">A seated human skeleton in dhyana pose unearthed from a cist at Perumbeir in Tiruvallur District. Kādukaḷ images at Cairn Circles in Tiruvannamalai. Rearing of cattle including horse known from Sanur megalithic site bone collections. Sarcophaguses and urn burials in diverse shapes were located across the region.</div>
+      <div class="timeline-tags"><span class="tag">Cist Burials</span><span class="tag">Urn Burials</span><span class="tag">Iron Age</span><span class="tag">Cairn Circles</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--gold)"></div>
+      <div class="timeline-era">Chalcolithic · Adichanallur</div>
+      <div class="timeline-name">4000 Artefacts & Early Metallurgy</div>
+      <div class="timeline-desc">Nearly 4,000 artefacts collected from Adichanallur in Tirunelveli District, including copper, iron, and gold objects. Bone examination revealed Armenian group ancestry, ethnically associated with Dravidians. Evidence for knowledge of gold use from the Chalcolithic period.</div>
+      <div class="timeline-tags"><span class="tag">Gold Objects</span><span class="tag">Copper</span><span class="tag">Iron</span><span class="tag">Dravidian Heritage</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--teal)"></div>
+      <div class="timeline-era">Megalithic · Kodumanal & Kovalanpottal</div>
+      <div class="timeline-name">Trade & Crafts Emerge</div>
+      <div class="timeline-desc">Microlithic, Neolithic tools and Megalithic artefacts at Kovalanpottal. Copper square coin of Pandyan empire and ornaments also collected. Contact with Northern India evidenced by Punch Marked coins and N.B.P. ware in Megalithic urn burials and cairn circles.</div>
+      <div class="timeline-tags"><span class="tag">Pandyan Coins</span><span class="tag">NBP Ware</span><span class="tag">Northern Contacts</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORIC SITES CARDS -->
+<section class="section" id="historic" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-tag">Sangam Age to Medieval Period</span>
+    <h2 class="section-title">Major <span>Excavation</span> Sites</h2>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon">⚓</div>
+      <div class="card-title">Arikkamedu</div>
+      <div class="card-body">A rectangular godown (45m × 11m) and granary, dyeing tubs, ring wells, Arretine ware, Amphorae, Rouletted ware, and Terra Sigileta pottery. Strong evidence of Roman trade. Earlier strata yielded Neolithic stone implements.</div>
+      <div class="card-location">📍 Pondicherry State · Early Historic</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛥️</div>
+      <div class="card-title">Pumpuhar</div>
+      <div class="card-body">A wharf at Kilaiyur dated 316 ± 105 B.C. (C14). Buddha Vihar at Melaiyur with five chambers decorated with stucco. A water reservoir at Vanagiri (1st–2nd C. A.D.). Underwater 'U'-shaped laterite structure found 5km seaward at 76 ft depth.</div>
+      <div class="card-location">📍 Nagappattinam District · 3rd C. BC</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎲</div>
+      <div class="card-title">Alagankulam</div>
+      <div class="card-body">Three-phase occupation from wooden-post huts to brick houses. Roman coins (4th–5th C. A.D.). Amphorae from Paris, Italy, and Europe. A rectangular dice bearing numerals one, two, and three — most outstanding find. Rouletted pottery in pink colour named after this site.</div>
+      <div class="card-location">📍 Ramanathapuram District · 2nd C. BC</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚔️</div>
+      <div class="card-title">Korkai</div>
+      <div class="card-body">Burial urns, brick structure in east-west orientation. Inscribed pot sherds with Tamil character from 3rd C. BC to 2nd C. A.D. Iron objects like dagger, clamp, sword. NBP sherd datable to 4th–3rd C. BC. C14 dates of 785 B.C. and 805 ± 95 B.C. from hearth charcoal.</div>
+      <div class="card-location">📍 Tirunelveli District · Pre-Sangam</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏛️</div>
+      <div class="card-title">Kanchipuram</div>
+      <div class="card-body">Continuous artefacts from pre-Christian to Vijayanagar era. 11 terracotta coin moulds (Satavahana & Pallava). Buddha Vihar and circular stupa foundation. Gold coin of Vijayanagar period. Grey ware sherd reading 'Putalatisa' — name of a Buddhist monk.</div>
+      <div class="card-location">📍 Kanchipuram District · Multi-Period</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💎</div>
+      <div class="card-title">Kodumanal</div>
+      <div class="card-body">Bead-making and iron-melting industries. Weaving and cultivation evidence. Bronze tiger inlaid with carnelian stones. Thousands of carnelian beads. Silver punch-marked coins bearing Nandipata figure. Gold and silver spiral rings found near skeletons.</div>
+      <div class="card-location">📍 Periyar District · 3rd C. BC</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👑</div>
+      <div class="card-title">Gangaikondacholapuram</div>
+      <div class="card-body">Palace of Rajendra Chola with double-wall system (55 cm gap filled with river sand for cooling). 32 granite base stones for wooden/stone pillars. Exquisite ivory and bone carvings — yali, lion, elephant figures. Porcelain wares from South East Asia (11th C. A.D.).</div>
+      <div class="card-location">📍 Perambalur District · 11th C. AD</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗡️</div>
+      <div class="card-title">Padavedu</div>
+      <div class="card-body">Sambuvaraya period: king's palace guarded by fort wall and moat. Ring wells in every residential place. Terracotta lamps with 1, 3, 5, 7, and 9 facets. Coin moulds and glass production furnaces. Strong Saivite affiliation evidenced by Linga figurines and Bull emblem.</div>
+      <div class="card-location">📍 Tiruvannamalai District · Medieval</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌿</div>
+      <div class="card-title">Sendamangalam</div>
+      <div class="card-body">Artefacts spanning Megalithic to later Chola period. A copper seal of Pandya emblem. Structure of Kopperunjinga, king of Kadavaraya. Terracotta images including crawling Krishna (Chola period) and a standing couple in folk art style.</div>
+      <div class="card-location">📍 Namakkal District · Multi-Period</div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCOVERIES BAR CHART -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-tag">Quantified Evidence</span>
+    <h2 class="section-title">Notable <span>Discoveries</span> by Category</h2>
+  </div>
+
+  <div style="background:var(--surface); border:1px solid rgba(201,147,58,.12); border-radius:4px; padding:2.5rem;">
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-label">Coin Finds</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:88%" data-count="Roman · Greek · Pandya"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">Pottery Types</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:95%; background:linear-gradient(90deg,var(--teal),var(--teal-light))" data-count="Rouletted · NBP · Black-Red"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">Inscribed Sherds</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:72%; background:linear-gradient(90deg,#6b3a8b,#a06adf)" data-count="Tamil · Brahmi · Graffiti"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">Trade Objects</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:80%; background:linear-gradient(90deg,var(--teal),var(--gold))" data-count="Amphorae · Beads · Seals"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">Religious Items</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:65%; background:linear-gradient(90deg,var(--crimson),var(--gold))" data-count="Buddha · Shiva · Votive"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">Metal Artefacts</div>
+        <div class="bar-track"><div class="bar-fill" style="--w:76%; background:linear-gradient(90deg,#555,var(--gold))" data-count="Iron · Copper · Gold"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRADE SECTION -->
+<section class="section" id="trade" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-tag">International Commerce</span>
+    <h2 class="section-title">Tamil Nadu's <span>Global Trade</span> Network</h2>
+  </div>
+
+  <div class="trade-section">
+    <p style="color:var(--text-muted); font-size:1rem; line-height:1.8; max-width:700px;">
+      Archaeological evidence from Arikkamedu, Alagankulam, Korkai, and Karur demonstrates an extensive maritime trade network. Tamil merchants exported semi-precious stone beads, shell bangles, pearls, and special pottery while importing Roman amphorae, Phoenician goods, and Greek coins.
+    </p>
+    <div class="trade-routes">
+      <div class="trade-route">
+        <div class="route-flag">🏛️</div>
+        <div class="route-name">Rome & Greece</div>
+        <div class="route-goods">Roman gold coins, Arretine ware, Amphorae, Rouletted pottery · Discovered at Karur, Alagankulam, Arikkamedu</div>
+      </div>
+      <div class="trade-route">
+        <div class="route-flag">🇫🇷</div>
+        <div class="route-name">France & Italy</div>
+        <div class="route-goods">Amphorae confirmed by French archaeologists from Paris & Italian European centres</div>
+      </div>
+      <div class="trade-route">
+        <div class="route-flag">🇱🇰</div>
+        <div class="route-name">Sri Lanka</div>
+        <div class="route-goods">Square copper coin of Sangam age & Pallava coin found in Sri Lanka with Tamil legend test stone</div>
+      </div>
+      <div class="trade-route">
+        <div class="route-flag">🇹🇭</div>
+        <div class="route-name">Thailand</div>
+        <div class="route-goods">Tamil legend test stone found in Thailand · Evidence of direct maritime trade routes to Southeast Asia</div>
+      </div>
+      <div class="trade-route">
+        <div class="route-flag">🇪🇬</div>
+        <div class="route-name">Egypt</div>
+        <div class="route-goods">Inscribed pot sherds bearing Tamil names discovered in Egypt · Confirming Tamil merchant presence</div>
+      </div>
+      <div class="trade-route">
+        <div class="route-flag">🌏</div>
+        <div class="route-name">South East Asia</div>
+        <div class="route-goods">Porcelain wares identified at Gangaikondacholapuram · Dated to 11th C. A.D. by Japanese professor Carewell</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CULTURE SECTION -->
+<section class="section" id="culture" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-tag">Domestic Life, Sports & Industries</span>
+    <h2 class="section-title">Daily Life in <span>Ancient</span> Tamil Nadu</h2>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon">🏠</div>
+      <div class="card-title">Architecture & Housing</div>
+      <div class="card-body">Early historic: large brick houses with lime floors. Medieval: backed-brick with stucco decorations and roof tiles. Double-wall system for cooling. Wooden pillars on stone bases, drainage channels, ring wells in every residential place.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🍚</div>
+      <div class="card-title">Food & Cuisine</div>
+      <div class="card-body">Rice was the staple food. In dry land areas: ragi, kambu, and corn. Charred grains of ragi, corn, and kambu found at Kodumanal. During feasts, non-vegetarian food was consumed. Oil was pressed for cooking and lamp use.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🪡</div>
+      <div class="card-title">Weaving & Dyeing</div>
+      <div class="card-body">Dyeing tubs discovered at Karur, Arikkamedu, and Uraiyur. Terracotta spindle whorls used for spinning. Superior textile quality attracted foreign merchants. Weaving was a major industry alongside cultivation.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">Sports & Recreation</div>
+      <div class="card-body">Hip-hop (kabbadi-type game) prevalent in all periods — terracotta hip-hops found in almost every layer. Dice gambling evident from 4th century B.C. at Alagankulam. Chess with terracotta and bone gamesmen. Smoking habit evidenced from later periods.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💍</div>
+      <div class="card-title">Ornaments & Jewellery</div>
+      <div class="card-body">Common folk wore terracotta and shell bangles. Wealthy wore gold diadems, rings, ear studs, and chains of semi-precious stone beads. Crystal beads at Gangaikondacholapuram. Bronze and glass ornaments widespread.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">✍️</div>
+      <div class="card-title">Literacy & Script</div>
+      <div class="card-body">From Megalithic period, Tamils used graffiti symbols. Standardised Tamil script in use through Sangam age. Evolved into Vatteluttu and early modern Tamil. Inscribed potsherds in virtually all early historic sites — even ordinary citizens were literate.</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-block">
+  <p class="quote-text">"The cultural heritage of Tamils was superior in all respects."</p>
+  <p class="quote-source">— Natana Kasinathan, Conclusion of the Dr. Balakrishna Nayar Memorial Endowment Lecture, 1995</p>
+</div>
+
+<!-- RELIGION SECTION -->
+<section class="section" id="religion">
+  <div class="section-header">
+    <span class="section-tag">Spiritual Life Through the Ages</span>
+    <h2 class="section-title">Religion & <span>Worship</span></h2>
+  </div>
+
+  <div class="religion-grid">
+    <div class="relic-card">
+      <span class="relic-icon">🌿</span>
+      <div class="relic-name">Nature Worship</div>
+      <div class="relic-desc">Earliest Tamils worshipped natural beings — trees, water, sun. Gradually shifted to anthropomorphic deities.</div>
+    </div>
+    <div class="relic-card">
+      <span class="relic-icon">🏺</span>
+      <div class="relic-name">Mother Goddess</div>
+      <div class="relic-desc">Mūthoḷ (Mother Goddess) images found in cairn circles (1000–500 B.C.). Tradition continued as Mariamman worship in July–August.</div>
+    </div>
+    <div class="relic-card">
+      <span class="relic-icon">☸️</span>
+      <div class="relic-name">Buddhism</div>
+      <div class="relic-desc">Predominant in northern Tamil Nadu up to Pumpuhar in early historic period. Vihar at Pumpuhar with individual monk rooms. Stupa at Kanchipuram (2nd C. B.C.).</div>
+    </div>
+    <div class="relic-card">
+      <span class="relic-icon">🕉️</span>
+      <div class="relic-name">Saivism</div>
+      <div class="relic-desc">Shiva worship as Phallus known from Padavedu. Sambuvarayas — descendants of Sambu (Lord Shiva) — strong Saivite patrons. Lingas found widely.</div>
+    </div>
+    <div class="relic-card">
+      <span class="relic-icon">🦢</span>
+      <div class="relic-name">Vaishnavism</div>
+      <div class="relic-desc">Vishnu as crawling Krishna venerated — evidenced at Sendamangalam excavation. Ganapati with Mushika mount at Alagarai and Tirukkampuliyur.</div>
+    </div>
+    <div class="relic-card">
+      <span class="relic-icon">🔱</span>
+      <div class="relic-name">Jainism</div>
+      <div class="relic-desc">Patronised alongside Buddhism, Saivism, and Vaishnavism during the historic period. Part of the pluralistic religious landscape of ancient Tamil Nadu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-tamil">தமிழரின் பயணம் தொடரும்…</div>
+  <div class="footer-title">Cultural Heritage of Tamil Nadu · Archaeological Evidence</div>
+  <p style="margin-top:.8rem;">Based on the Dr. Balakrishna Nayar Memorial Endowment Lecture (1995) by Natana Kasinathan<br>
+  Published by the State Department of Archaeology, Government of Tamil Nadu · Publication No. 130</p>
+  <div style="margin-top:1.5rem; font-size:.75rem; letter-spacing:.1em; color:rgba(201,147,58,.4);">
+    ✦ DASHBOARD CREATED FOR THIRU ADVANCED · தமிழ் கலாச்சாரம் வாழட்டும் ✦
+  </div>
+</footer>
+
+<script>
+  // ─── INTERSECTION OBSERVER for reveal animations ───
+  const revealEls = document.querySelectorAll(
+    '.stat-item, .section-header, .timeline-item, .card, .trade-route, .relic-card, .bar-item'
+  );
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  // ─── COUNT-UP ANIMATION for stat numbers ───
+  const statNums = document.querySelectorAll('.stat-number[data-target]');
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target);
+        const duration = 1800;
+        const start = performance.now();
+        const animate = (now) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target).toLocaleString();
+          if (progress < 1) requestAnimationFrame(animate);
+          else el.textContent = target.toLocaleString();
+        };
+        requestAnimationFrame(animate);
+        countObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  statNums.forEach(el => countObserver.observe(el));
+
+  // ─── BAR FILL animation ───
+  const barFills = document.querySelectorAll('.bar-fill');
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const w = el.style.getPropertyValue('--w') || el.getAttribute('style').match(/--w:([^;]+)/)?.[1];
+        if (w) {
+          setTimeout(() => { el.style.width = w; }, 100);
+        }
+        barObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  barFills.forEach(el => barObserver.observe(el));
+
+  // ─── Smooth scroll for all links ───
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // ─── Nav background on scroll ───
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 60
+      ? 'rgba(10,6,4,0.97)'
+      : 'linear-gradient(180deg, rgba(10,6,4,.95) 0%, transparent 100%)';
+  });
+</script>
+</body>
+</html>
